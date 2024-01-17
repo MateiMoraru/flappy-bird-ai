@@ -3,6 +3,9 @@ import numpy as np
 from typing import List, Tuple
 import random
 import pygame
+from text import Text
+
+from window import Window
 
 class Brain:
     def __init__(self, genes:List=None):
@@ -135,39 +138,45 @@ class GeneticAlgorithm:
     def __init__(self, population:int):
         self.population = population
         self.generation = 1
-        self.best_fitness_total = []
-        self.fitness = []
-        self.max_fitness_total = -1
+        self.best_score_total = []
+        self.score = []
+        self.max_score_total = -1
+        self.max_score_generation = 0
+        self.max_score = -1
+        self.last_repeat = -1
         self.genes = []
 
-    def add_fitness(self, fitness):
-        self.fitness.append(fitness)
+    def add_score(self, score):
+        self.score.append(score)
 
     def add_genes(self, genes):
         self.genes.append(genes)
 
 
-    def best_fitness(self):
-        max_fitness = -1
-        if len(self.fitness) < self.population:
-            max_fitness = self.fitness[0]
-            self.parent_bird_genes = self.genes[0]
-            return
-        for i in range(0, self.population):
-            if len(self.fitness) < i:
-                max_fitness = self.fitness[0]
-                self.parent_bird_genes = self.genes[0]
-                return
-            if self.fitness[i] > max_fitness:
-                max_fitness = self.fitness[i]
-                self.parent_bird_genes = self.genes[i]
-        self.max_fitness = max_fitness
-        self.best_fitness_total.append(max_fitness)
-        if self.max_fitness > self.max_fitness_total:
-            self.max_fitness_total = self.max_fitness
+    def best_score(self):
+        self.max_score = max(self.score)
+        if self.max_score > self.max_score_total:
+            print(f"New highscore reached!")
+            print(f"Previous best: {self.max_score_total}")
+            self.max_score_total = self.max_score
+            self.max_score_generation = self.generation
+            self.max_score_genes = self.genes[self.score.index(self.max_score)]
+        else:
+            print(f"Highest score: {self.max_score_total}.")
+        print(f"Current Score: {self.max_score}")
+        
+        max_score_idx = self.score.index(self.max_score)
+        self.parent_bird_genes = self.genes[max_score_idx]
+        self.best_score_total.append(self.max_score)
+        
+        if self.generation - self.max_score_generation > 2 and self.max_score < self.max_score_total - 50 and self.generation - self.last_repeat > 2: 
+            self.last_repeat = self.generation
+            self.parent_bird_genes = self.max_score_genes
+            print(f"Repeating from best")
+            print(f"Best gen: {self.max_score_generation}")
 
     
-    def mutate_genes(self, mutation_mult:int=10, mutation_chance:float=0.0):
+    def mutate_genes(self, mutation_mult:int=1, mutation_chance:float=0.85):
         best_genes = self.parent_bird_genes
         new_genes = []
         weights = [[], []]
@@ -175,24 +184,24 @@ class GeneticAlgorithm:
         
         for weight in best_genes[0][0]:
             current_weight = weight
-            if random.random() > mutation_chance:
-                current_weight += rand(-1, 1) * mutation_mult
+            if random.uniform(0, 1) > mutation_chance:
+                current_weight += random.uniform(-1,1) * mutation_mult
             weights[0].append(current_weight)
         for weight in best_genes[0][1]:
             current_weight = weight
-            if random.random() > mutation_chance:
-                current_weight += rand(-1, 1) * mutation_mult
+            if random.uniform(0, 1) > mutation_chance:
+                current_weight += random.uniform(-1,1) * mutation_mult
             weights[1].append(current_weight)
 
         for bias in best_genes[1][0]:
             current_bias = bias
-            if random.random() > mutation_chance:
-                current_bias += rand(-1, 1) * mutation_mult
+            if random.uniform(0, 1) > mutation_chance:
+                current_bias += random.uniform(-1,1) * mutation_mult
             biases[0].append(current_bias)
         for bias in best_genes[1][1]:
             current_bias = bias
-            if random.random() > mutation_chance:
-                current_bias += rand(-1, 1) * mutation_mult
+            if random.uniform(0, 1) > mutation_chance:
+                current_bias += random.uniform(-1,1) * mutation_mult
             biases[1].append(current_bias)
 
         new_genes.append(weights)
@@ -200,12 +209,14 @@ class GeneticAlgorithm:
         return new_genes
 
 
-    def spread_genes(self, mutation_mult:int=100, mutation_chance:float=0.7):
+    def spread_genes(self, mutation_mult:int=1, mutation_chance:float=0.85):
+        print(f"Mutation multiplier: {mutation_mult}")
+        print(f"Mutation chance: {mutation_chance}")
         new_genes = []
         for i in range(0, self.population):
             genes = self.mutate_genes(mutation_mult, mutation_chance)
             new_genes.append(genes) 
-        self.fitness = []
+        self.score = []
         self.genes = []
         return new_genes
     
@@ -214,21 +225,34 @@ class GeneticAlgorithm:
         self.generation += 1
 
 
-    def draw_curve(self, bottom, window:pygame.Surface):
-        last_pos = bottom
+    def draw_curve(self, bottom, window:Window, font:pygame.Font):
+        if len(self.best_score_total) <= 1:
+            return
+        pygame.draw.rect(window.get(), (50, 50, 50), (0, window.size[1] - 250, 300, 250))
+        pygame.draw.line(window.get(), (0, 0, 0), (0, window.size[1] - 20), (300, window.size[1] - 20))
+        start_pos_y = window.size[1] - 10 - font.size("Generation")[1] / 2
+        Text(font, "Generation", (0, 0, 0), (150 - font.size("Generation")[0] / 2, start_pos_y)).draw(window.get())
+        last_pos = [bottom[0], bottom[1] - 10 - font.size("Generation")[1] / 2]
         idx = 0
-        for fitness in self.best_fitness_total:
-            pos = (bottom[0] + idx * 20, bottom[1] - fitness)
-            pygame.draw.circle(window, (0, 0, 0), pos, 5)
-            pygame.draw.line(window, (0, 0, 0), last_pos, pos)
+        
+        x_scale = 300 / (len(self.best_score_total) - 1)
+        for score in self.best_score_total:
+            pos = (bottom[0] + idx * x_scale, (bottom[1] - score / 10 - 30))
+            #pygame.draw.circle(window.get(), (0, 0, 0), pos, 5)
+            color = (255, 0, 0)
+            if pos[1] < last_pos[1]:
+                color = (0, 255, 0)
+            elif pos[1] == last_pos[1]:
+                color = (0, 0, 0)
+            pygame.draw.line(window.get(), color, last_pos, pos)
             last_pos = pos
             idx += 1
 
         
     def restart(self):
         self.generation = 1
-        self.best_fitness_total = []
-        self.fitness = []
+        self.best_score_total = []
+        self.score = []
         self.genes = []
 
 
