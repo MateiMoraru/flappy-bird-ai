@@ -12,11 +12,9 @@ They take 3 inputs from the game environment (input layer):
 - The distance to the bottom point of the top pipe
 - The bird's velocity
 
-At first, we transform the input layer values in order to be 0 > a > 1 by applying the sigmoid function that we'll use for every node
+Initially, these input layer values undergo transformation via the sigmoid function, ensuring they fall within the range of 0 to 1 for subsequent node utilization.
 
-After collection information from the environment, it passes on to the hidden layer where some matrix multiplications take place, depending on its genes.
-The hidden layer then passes on to the output layer, where some other mathematic formulas are calculated, resulting in the output bein between 0 and 1. If this prediction is > 0.5, the bird jumps.
-
+Upon gathering information from the environment, the data proceeds to the hidden layer, where matrix multiplications occur based on genetic factors. Subsequently, the hidden layer transmits to the output layer, where additional mathematical computations ensue, yielding an output within the range of 0 to 1. If the resulting prediction surpasses 0.5, the bird executes a jump action.
 ### Genetic Algorithm
 Every bird has a variable called fitness, representing how good it is perfoming
 After each bird has died, the genes from the best perfoming bird are stored, and then spread to some new birds with some mutations.
