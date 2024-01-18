@@ -10,10 +10,10 @@ class Pipe:
         self.speed = speed
 
         pos = [window.size[0] + offset_x, window.size[1] / 2]
-        self.top_height = random.randint(window.size[1] // 6, window.size[1] - window.size[1] // 4)
+        self.top_height = random.randint(window.size[1] // 6, window.size[1] - window.size[1] // 4 - 100)
         self.pos = pos
         self.bottom_pipe = Rect((pos[0], self.top_height + 300), (75, 1000), (38, 212, 32), "PIPE_BOTTOM", window.get())
-        self.middle = Rect((pos[0], self.top_height), (75, 150), (0, 0, 0), "AIR", self.window.get())
+        self.middle = Rect((pos[0], self.top_height), (75, 300), (0, 0, 0), "AIR", self.window.get())
         self.top_pipe = Rect((pos[0], 0), (75, self.top_height), (38, 212, 32), "PIPE_TOP", window.get())
         self.score_counted = False
         self.looped = False
@@ -22,6 +22,7 @@ class Pipe:
     def draw(self):
         self.bottom_pipe.draw()
         self.top_pipe.draw()
+        #self.middle.draw()
 
     
     def loop(self):

@@ -27,19 +27,24 @@ class Bird:
         #self.bird.draw()
         if self.dead or self.collided:
             self.bird.color = (255, 0, 0)
-        #pygame.draw.circle(self.window.get(), self.bird.color, (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8)
-        #pygame.draw.circle(self.window.get(), (0, 0, 0), (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8, 1)
+        pygame.draw.circle(self.window.get(), self.bird.color, (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8)
+        pygame.draw.circle(self.window.get(), (0, 0, 0), (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8, 1)
         #self.bird.draw()
-        surface = pygame.Surface((self.bird.size[0] * 2.6, self.bird.size[1] * 2.6), pygame.SRCALPHA)
-        pygame.draw.circle(surface, (248, 255, 48, 255), (self.bird.size[0] / .8, self.bird.size[0] / .8), self.bird.size[0] / 0.8)
-        surface.fill((248, 255, 48, 100))
-        self.window.get().blit(surface, self.bird.pos)
-        pygame.draw.line(self.window.get(), (255, 0, 0), self.bird.pos, (self.bird.pos[0] + (self.inputs[0] * 1), self.bird.pos[1]), 2)
-        pygame.draw.line(self.window.get(), (255, 0, 0), self.bird.pos, (self.bird.pos[0], self.bird.pos[1] + self.inputs[1]), 2)
+        #surface = pygame.Surface((self.bird.size[0] * 2.6, self.bird.size[1] * 2.6), pygame.SRCALPHA)
+        #pygame.draw.circle(surface, (248, 255, 48, 255), (self.bird.size[0] / .8, self.bird.size[0] / .8), self.bird.size[0] / 0.8)
+        #surface.fill((248, 255, 48, 100))
+        #self.window.get().blit(surface, self.bird.pos)
+        #pygame.draw.line(self.window.get(), (255, 0, 0), (self.bird.pos[0] + self.bird.size[0] * 0.8, self.bird.pos[1] + self.bird.size[1] * 0.8), (self.bird.pos[0] + (self.inputs[0] * 1), self.bird.pos[1]), 2)
+        #pygame.draw.line(self.window.get(), (255, 0, 0), self.bird.pos, (self.bird.pos[0], self.bird.pos[1] + self.inputs[1]), 2)
 
 
     def loop(self, delta_time, next_pipe:Pipe):
-        self.fitness += delta_time#self.score +(1 / abs(next_pipe.middle.center[1] - self.bird.center[1]))
+        #print(next_pipe.middle.center[1] - self.bird.pos[1], self.bird.pos[1])
+        self.fitness = self.score
+        try:
+            self.fitness += 1 / abs((next_pipe.middle.pos[1] + next_pipe.middle.size[1] / 2) - (self.bird.pos[1] + self.bird.size[1] / 2))
+        except:
+            self.fitness += 1
         self.velocity += self.acceleration * delta_time
         self.bird.move(y=self.velocity)
         
@@ -77,7 +82,7 @@ class Bird:
 
     
     def collide(self, rect):
-        if self.bird.collide_rect(rect.rect) or rect.collide_rect(self.bird.rect):
+        if self.bird.collide_rect(rect.rect):
             return True
 
         return False

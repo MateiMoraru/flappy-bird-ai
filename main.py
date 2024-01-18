@@ -52,6 +52,15 @@ class Main:
 
     def quit(self, code:int=0):
         print(f"Exited program with exit code: {code}")
+
+        out = ""
+        out += f"Best genes occured in generation {self.environment.GA.max_score_generation} (score: {self.environment.GA.max_score_total})\n"
+        out += f"Genes: \n{self.environment.GA.max_score_genes}"
+        fout = open("data/best_genes.txt", 'a')
+        fout.write(out)
+        fout.close()
+        
+
         self.window.quit()
         pygame.quit()
         quit()

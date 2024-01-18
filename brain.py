@@ -1,3 +1,4 @@
+import math
 import time
 import numpy as np 
 from typing import List, Tuple
@@ -226,25 +227,28 @@ class GeneticAlgorithm:
 
 
     def draw_curve(self, bottom, window:Window, font:pygame.Font):
+        offset = [window.size[0] - 300, 0]
+        pygame.draw.rect(window.get(), (50, 50, 50), (0 + offset[0], window.size[1] - 250, 300, 250))
+        pygame.draw.line(window.get(), (0, 0, 0), (0 + offset[0], window.size[1] - 20), (300 + offset[0], window.size[1] - 20))
+        pygame.draw.line(window.get(), (0, 0, 0), (20 + offset[0], window.size[1] - 250), (20 + offset[0], window.size[1]))
+        start_pos_y = window.size[1] - 10 - font.size("Generation")[1] / 2
+        #Text(font, "Generation", (0, 0, 0), (150 - font.size("Generation")[0] / 2 + offset[0], start_pos_y)).draw(window.get())
         if len(self.best_score_total) <= 1:
             return
-        pygame.draw.rect(window.get(), (50, 50, 50), (0, window.size[1] - 250, 300, 250))
-        pygame.draw.line(window.get(), (0, 0, 0), (0, window.size[1] - 20), (300, window.size[1] - 20))
-        start_pos_y = window.size[1] - 10 - font.size("Generation")[1] / 2
-        Text(font, "Generation", (0, 0, 0), (150 - font.size("Generation")[0] / 2, start_pos_y)).draw(window.get())
-        last_pos = [bottom[0], bottom[1] - 10 - font.size("Generation")[1] / 2]
+        last_pos = [bottom[0] + offset[0] + 20, bottom[1] - 10 - font.size("Generation")[1] / 2]
         idx = 0
+        scale = [1, 200 / max(self.best_score_total)]
         
         x_scale = 300 / (len(self.best_score_total) - 1)
         for score in self.best_score_total:
-            pos = (bottom[0] + idx * x_scale, (bottom[1] - score / 10 - 30))
+            pos = (bottom[0] + idx * x_scale + offset[0] + 20, (bottom[1] - (score * scale[1]) - 20))
             #pygame.draw.circle(window.get(), (0, 0, 0), pos, 5)
             color = (255, 0, 0)
             if pos[1] < last_pos[1]:
                 color = (0, 255, 0)
-            elif pos[1] == last_pos[1]:
-                color = (0, 0, 0)
             pygame.draw.line(window.get(), color, last_pos, pos)
+            pygame.draw.line(window.get(), (0, 0, 0), (pos[0], bottom[1] - 15), (pos[0], bottom[1] - 20))
+            Text(font, str(idx), (0, 0, 0), (pos[0] - font.size("idx")[0] / 2, bottom[1] - 15)).draw(window.get())
             last_pos = pos
             idx += 1
 

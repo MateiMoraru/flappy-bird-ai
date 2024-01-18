@@ -1,48 +1,25 @@
 # Flappy Bird AI
 
-## Description
-Using the library `pygame`, I've recreated the game `Flappy bird`, keeping the core mechanics the same as in the original, but altering the bird functionality by giving the bird an actual brain.
+## Overview
+This project recreates the classic game "Flappy Bird" using the `pygame` library. The unique twist is the implementation of an artificial intelligence system for the birds within the game, giving them virtual brains.
 
-### The brain
-The birds' brains work by trying to imitate real life neuron connections in the brain, using the branch of `Machine Learning` called `Neural Networks` ([More Information](https://www.ibm.com/topics/neural-networks)).
+## Neural Network Implementation
+The birds' brains simulate real-life neuron connections through a neural network, a component of machine learning. [Learn more about Neural Networks](https://www.ibm.com/topics/neural-networks).
 
-#### How do they work?
-They take 3 inputs from the game environment (input layer):
-- The distance to the next pipe
-- The distance to the bottom point of the top pipe
-- The bird's velocity
-At first, we transform the input layer values in order to be 0 > a > 1 by applying the sigmoid function (`1/(1 + -e^-x)`).
+![Neural Network Example](assets/neural-network.png)
+### Input Layer
+The neural network takes three inputs from the game environment:
+- Distance to the next pipe
+- Distance to the bottom point of the top pipe
+- Bird's velocity
 
-After collection information from the environment, it passes on to the hidden layer where each hidden layer gets the value <math display="block">
-  <msub>
-    <mi>y</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>=</mo>
-  <munderover>
-    <mo data-mjx-texclass="OP">&#x2211;</mo>
-    <mrow data-mjx-texclass="ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mrow data-mjx-texclass="ORD">
-      <mi>n</mi>
-    </mrow>
-  </munderover>
-  <msub>
-    <mi>w</mi>
-    <mrow data-mjx-texclass="ORD">
-      <mi>j</mi>
-      <mi>i</mi>
-    </mrow>
-  </msub>
-  <mo>&#x22C5;</mo>
-  <msub>
-    <mi>x</mi>
-    <mi>i</mi>
-  </msub>
-</math>
+These inputs undergo transformation using the sigmoid function, ensuring values are within the range of 0 to 1.
 
+### Hidden Layer and Output Layer
+Data proceeds to the hidden layer, where matrix multiplications occur based on genetic factors. The output layer performs additional computations, resulting in an output between 0 and 1. If the prediction exceeds 0.5, the bird executes a jump action.
 
-![Example](assets/Screenshot_3.png)
+## Genetic Algorithm
+Each bird has a fitness variable representing its performance. After a bird's demise, genes from the best-performing bird are stored and transmitted to new birds with some mutations. The mutation multiplier adapts based on fitness, fostering learning and improvement over time.
+
+## Result
+![Result](assets/Screenshot_5.png)

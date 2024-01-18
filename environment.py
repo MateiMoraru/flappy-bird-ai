@@ -11,7 +11,7 @@ class Environmnet:
         self.window = window
         self.font = font
 
-        self.population = 20
+        self.population = 10
         self.GA = GeneticAlgorithm(self.population)
         self.birds = []
         self.pipes = []
@@ -29,7 +29,7 @@ class Environmnet:
         if self.GA.generation > 1:
             self.GA.best_score()
             if self.GA.max_score != 0:
-                new_genes = self.GA.spread_genes(1 / ((self.GA.max_score + 1) / 10), 0.7)
+                new_genes = self.GA.spread_genes((1 / self.GA.max_score) * 0.025, 0.85)
             else:
                 new_genes = self.GA.spread_genes(1, 0.6)
                 
@@ -38,7 +38,7 @@ class Environmnet:
                 bird.brain.set_genes(new_genes[j][0], new_genes[j][1])
                 self.birds.append(bird)
         else:
-            for j in range(0, self.population * 10):
+            for j in range(0, self.population * 20):
                 bird = Bird(self.window)
                 self.birds.append(bird)
 
@@ -68,7 +68,7 @@ class Environmnet:
                 if not pipe.is_looped:
                     pipe.loop()
                     pipe.set_looped()
-                if bird.collide(pipe.middle) and not bird.score_counted:
+                if (bird.collide(pipe.middle) or bird.bird.pos[0] > pipe.middle.pos[0]) and not bird.score_counted:
                     bird.score += 1
                     bird.score_counted = True
                     bird.last_score = time.time()
