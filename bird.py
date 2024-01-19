@@ -10,7 +10,7 @@ from pipe import Pipe
 class Bird:
     def __init__(self, window:Window, genes:List=None):
         self.window = window
-        self.bird = Rect((self.window.size[0] / 5 - 100, self.window.size[1] / 2 - 25), (20, 20), (248, 255, 48), "BIRD", window.get())
+        self.bird = Rect((self.window.size[0] / 5 - 100, self.window.size[1] / 2 - 25), (25, 25), (248, 255, 48), "BIRD", window.get())
         self.velocity = 0
         self.acceleration = 0.04 * self.window.scale
         self.collided = False
@@ -23,19 +23,27 @@ class Bird:
         self.last_score = 0
         self.looped = False
 
+        self.draw_bird_rect = False
+        self.draw_bird_circle = True
+        self.draw_inputs = True
+
+
     def draw(self):
         #self.bird.draw()
         if self.dead or self.collided:
             self.bird.color = (255, 0, 0)
-        pygame.draw.circle(self.window.get(), self.bird.color, (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8)
-        pygame.draw.circle(self.window.get(), (0, 0, 0), (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 0.8, 1)
-        #self.bird.draw()
+        if self.draw_bird_circle:
+            pygame.draw.circle(self.window.get(), self.bird.color, (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 1)
+            pygame.draw.circle(self.window.get(), (0, 0, 0), (self.bird.pos[0] + 10, self.bird.pos[1] + 10), self.bird.size[0] / 1, 1)
+        if self.draw_bird_rect:
+            self.bird.draw()
         #surface = pygame.Surface((self.bird.size[0] * 2.6, self.bird.size[1] * 2.6), pygame.SRCALPHA)
         #pygame.draw.circle(surface, (248, 255, 48, 255), (self.bird.size[0] / .8, self.bird.size[0] / .8), self.bird.size[0] / 0.8)
         #surface.fill((248, 255, 48, 100))
         #self.window.get().blit(surface, self.bird.pos)
-        #pygame.draw.line(self.window.get(), (255, 0, 0), (self.bird.pos[0] + self.bird.size[0] * 0.8, self.bird.pos[1] + self.bird.size[1] * 0.8), (self.bird.pos[0] + (self.inputs[0] * 1), self.bird.pos[1]), 2)
-        #pygame.draw.line(self.window.get(), (255, 0, 0), self.bird.pos, (self.bird.pos[0], self.bird.pos[1] + self.inputs[1]), 2)
+        if self.draw_inputs:
+            pygame.draw.line(self.window.get(), (255, 0, 0), (self.bird.pos[0] + self.bird.size[0] / 3, self.bird.pos[1] + self.bird.size[1] / 3), (self.bird.pos[0] + self.bird.size[0] / 3 + (self.inputs[0] * 1), self.bird.pos[1] + self.bird.size[1] / 3), 2)
+            pygame.draw.line(self.window.get(), (255, 0, 0), (self.bird.pos[0] + self.bird.size[0] / 3, self.bird.pos[1] + self.bird.size[1] / 3), (self.bird.pos[0] + self.bird.size[0] / 3, self.bird.pos[1] + self.bird.size[1] / 3 + self.inputs[1]), 2)
 
 
     def loop(self, delta_time, next_pipe:Pipe):

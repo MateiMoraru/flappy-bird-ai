@@ -237,19 +237,27 @@ class GeneticAlgorithm:
             return
         last_pos = [bottom[0] + offset[0] + 20, bottom[1] - 10 - font.size("Generation")[1] / 2]
         idx = 0
-        scale = [1, 200 / max(self.best_score_total)]
-        
-        x_scale = 300 / (len(self.best_score_total) - 1)
+        y_scale = 200 / max(self.best_score_total)
+        x_scale = 299 / (len(self.best_score_total) - 0)
+        draw = 1
+        if len(self.best_score_total) > 10:
+            draw = 2
+        if len(self.best_score_total) > 50:
+            draw = 5
+        if len(self.best_score_total) > 100:
+            draw = 10
         for score in self.best_score_total:
-            pos = (bottom[0] + idx * x_scale + offset[0] + 20, (bottom[1] - (score * scale[1]) - 20))
-            #pygame.draw.circle(window.get(), (0, 0, 0), pos, 5)
-            color = (255, 0, 0)
-            if pos[1] < last_pos[1]:
-                color = (0, 255, 0)
-            pygame.draw.line(window.get(), color, last_pos, pos)
-            pygame.draw.line(window.get(), (0, 0, 0), (pos[0], bottom[1] - 15), (pos[0], bottom[1] - 20))
-            Text(font, str(idx), (0, 0, 0), (pos[0] - font.size("idx")[0] / 2, bottom[1] - 15)).draw(window.get())
-            last_pos = pos
+            if idx % draw == 0:
+                pos = (bottom[0] + idx * x_scale + offset[0] + 20, (bottom[1] - (score * y_scale) - 20))
+                color = (255, 0, 0)
+                if pos[1] < last_pos[1]:
+                    color = (0, 255, 0)
+                pygame.draw.line(window.get(), color, last_pos, pos)
+                pygame.draw.line(window.get(), (0, 0, 0), (pos[0], bottom[1] - 15), (pos[0], bottom[1] - 20))
+                Text(font, str(idx), (0, 0, 0), (pos[0] - font.size("idx")[0] / 2, bottom[1] - 15)).draw(window.get())
+                if score == max(self.best_score_total):
+                    Text(font, str(int(score)), (0, 0, 0), (offset[0] + 5, pos[1] - 7.5)).draw(window.get())
+                last_pos = pos
             idx += 1
 
         

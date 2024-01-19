@@ -62,11 +62,18 @@ class Environmnet:
                 if closest_pipe[0] == -1 or 0 < bird.bird.pos[0] - pipe.middle.pos[0] < closest_pipe[0]:
                     closest_pipe[1] = idx
                     closest_pipe[0] = abs(bird.bird.pos[0] - pipe.middle.pos[0])
-                if (closest_pipe[1] != -1 and len(self.pipes) > closest_pipe[1]) and not bird.looped:
+                if idx + 1 < len(self.pipes) and pipe.middle.pos[0] < bird.bird.pos[0]:
+                    closest_pipe[1] = idx + 1
+                    closest_pipe[0] = abs(bird.bird.pos[0] - self.pipes[idx + 1].middle.pos[0])
+                if (closest_pipe[1] != -1) and not bird.looped:
+                    if closest_pipe[1] >= len(self.pipes):
+                        closest_pipe[1] = len(self.pipes) - 1
+                        closest_pipe[0] = abs(bird.bird.pos[0] - self.pipes[closest_pipe[1]].middle.pos[0])
                     bird.loop(self.window.delta_time, self.pipes[closest_pipe[1]])
                     bird.looped = True
                 if not pipe.is_looped:
                     pipe.loop()
+                    pipe.increase_speed(0.00001)
                     pipe.set_looped()
                 if (bird.collide(pipe.middle) or bird.bird.pos[0] > pipe.middle.pos[0]) and not bird.score_counted:
                     bird.score += 1
@@ -76,10 +83,10 @@ class Environmnet:
                     bird.dead = False
                 collided_bird = bird.collide(pipe.bottom_pipe) or bird.collide(pipe.top_pipe)
                 if bird.bird.pos[1] < 0 or bird.bird.pos[1] > self.window.size[1] or collided_bird:
-                    #bird.dead = True
                     birds_to_remove.append(bird)
                 if pipe.middle.pos[0] < -150:
                     self.pipes.remove(pipe)
+                    closest_pipe[1] -= 1
                     self.pipes.append(Pipe(self.window, 800))
                 idx += 1
                 

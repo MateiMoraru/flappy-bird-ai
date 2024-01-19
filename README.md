@@ -22,4 +22,4 @@ Data proceeds to the hidden layer, where matrix multiplications occur based on g
 Each bird has a fitness variable representing its performance. After a bird's demise, genes from the best-performing bird are stored and transmitted to new birds with some mutations. The mutation multiplier adapts based on fitness, fostering learning and improvement over time.
 
 ## Result
-![Result](assets/Screenshot_5.png)
+![Result](assets/Screenshot_7.png)

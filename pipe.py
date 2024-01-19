@@ -40,3 +40,7 @@ class Pipe:
 
     def set_looped(self, looped=True):
         self.looped = looped
+
+    
+    def increase_speed(self, speed:float):
+        self.speed += speed

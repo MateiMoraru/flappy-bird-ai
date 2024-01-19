@@ -30,6 +30,18 @@ class Main:
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_END:
                         self.quit()
+                    if e.key == pygame.K_t:
+                        for bird in self.environment.birds:
+                            if bird.draw_bird_rect:
+                                bird.draw_bird_rect = False
+                                bird.draw_bird_circle = True
+                            else:
+                                bird.draw_bird_rect = True
+                                bird.draw_bird_circle = False
+                    elif e.key == pygame.K_i:
+                        for bird in self.environment.birds:
+                            bird.draw_inputs = not bird.draw_inputs
+                    
             
             self.environment.loop(self.window.delta_time)
             self.draw()
